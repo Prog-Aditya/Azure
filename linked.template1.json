@@ -3,37 +3,32 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vnetName": {
-            "type": "array"
+            "type": "string"
             
         },
         "subnetName": {
-            "type": "array"
+            "type": "string"
         },
         "vnetaddressPrefix": {
-            "type": "array"
+            "type": "string"
         },
         "subNetaddressPrefix": {
-            "type": "array"
+            "type": "string"
         },
         "vNetToSubnetMap": {
-            "type": "array"
+            "type": "string"
         }
     },
     "resources": [
         {
-            "name": "[parameters('vnetName')[copyIndex('vnetcopy')]]",
+            "name": "[parameters('vnetName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-11-01",
             "location": "[resourceGroup().location]",
-            "copy": {
-                "name": "vnetcopy",
-                "count": "[length(parameters('vnetName'))]",
-                "mode": "Serial"
-            },
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "[parameters('vnetaddressPrefix')[copyIndex('vnetcopy')]]"
+                        "[parameters('vnetaddressPrefix')]"
                     ]
                 }
             }
@@ -41,14 +36,14 @@
         {
             "type": "Microsoft.Network/virtualnetworks/subnets",
             "apiVersion": "2022-09-01",
-            "name": "[concat(parameters('vNetToSubnetMap')[copyIndex('subnetCopy')],'/',parameters('subnetName')[copyIndex('subnetCopy')])]",
+            "name": "[concat(parameters('vNetToSubnetMap'),'/',parameters('subnetName'))]",
             "copy": {
                 "name": "subnetCopy",
                 "count": "[length(parameters('subnetName'))]",
                 "mode": "Serial"
             },
             "properties": {
-                "addressPrefix": "[parameters('subNetaddressPrefix')[copyIndex('subnetCopy')]]"
+                "addressPrefix": "[parameters('subNetaddressPrefix')]"
             },
             "dependsOn": [
                 "vnetcopy"
@@ -59,7 +54,7 @@
         "resourceID": 
         {
             "type": "string",
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName')[copyIndex()], parameters('subnetName')[copyIndex()])]"
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
         }
     }
 }
