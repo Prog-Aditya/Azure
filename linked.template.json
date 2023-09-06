@@ -1,0 +1,65 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "type": "array"
+            
+        },
+        "subnetName": {
+            "type": "array"
+        },
+        "vnetaddressPrefix": {
+            "type": "array"
+        },
+        "subNetaddressPrefix": {
+            "type": "array"
+        },
+        "vNetToSubnetMap": {
+            "type": "array"
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('vnetName')[copyIndex('vnetcopy')]]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "vnetcopy",
+                "count": "[length(parameters('vnetName'))]",
+                "mode": "Serial"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetaddressPrefix')[copyIndex('vnetcopy')]]"
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualnetworks/subnets",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('vNetToSubnetMap')[copyIndex('subnetCopy')],'/',parameters('subnetName')[copyIndex('subnetCopy')])]",
+            "copy": {
+                "name": "subnetCopy",
+                "count": "[length(parameters('subnetName'))]",
+                "mode": "Serial"
+            },
+            "properties": {
+                "addressPrefix": "[parameters('subNetaddressPrefix')[copyIndex('subnetCopy')]]"
+            },
+            "dependsOn": [
+                "vnetcopy"
+            ]
+        }
+    ],
+    "outputs": {
+        "resourceID": 
+        {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName')[copyIndex()], parameters('subnetName')[copyIndex()])]"
+        }
+    }
+}
