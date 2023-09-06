@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "type": "string"
+            
+        },
+        "subnetName": {
+            "type": "string"
+        },
+        "vnetaddressPrefix": {
+            "type": "string"
+        },
+        "subNetaddressPrefix": {
+            "type": "string"
+        },
+        "vNetToSubnetMap": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('vnetName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetaddressPrefix')]"
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualnetworks/subnets",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('vNetToSubnetMap'),'/',parameters('subnetName'))]",
+            "properties": {
+                "addressPrefix": "[parameters('subNetaddressPrefix')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+            ]
+        }
+    ],
+    "outputs": {
+        "resourceID": 
+        {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+        }
+    }
+}
