@@ -37,16 +37,11 @@
             "type": "Microsoft.Network/virtualnetworks/subnets",
             "apiVersion": "2022-09-01",
             "name": "[concat(parameters('vNetToSubnetMap'),'/',parameters('subnetName'))]",
-            "copy": {
-                "name": "subnetCopy",
-                "count": "[length(parameters('subnetName'))]",
-                "mode": "Serial"
-            },
             "properties": {
                 "addressPrefix": "[parameters('subNetaddressPrefix')]"
             },
             "dependsOn": [
-                "vnetcopy"
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
             ]
         }
     ],
