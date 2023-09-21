@@ -149,7 +149,7 @@
                 "mode"      : "Serial"
             },
             "name"          : "[parameters('publicIpName')[copyIndex('pipcopy')]]",
-            "location"      : "[resourceGroup().location]",
+            "location"      : "centralindia",
             "tags": 
             {
                 "displayName": "[parameters('tags')[copyIndex('pipcopy')]]"
@@ -172,7 +172,7 @@
                 "mode"         : "Serial"
             },
             "name"             : "[parameters('nsgName')[copyIndex('nsgcopy')]]",
-            "location"         : "[resourceGroup().location]",
+            "location"         : "centralindia",
             "properties": {
                 "securityRules": [
                     {
@@ -202,7 +202,7 @@
                 "count"     : "[length(parameters('vnetName'))]"
             },
             "name"          : "[parameters('vnetName')[copyIndex('vnetCopy')]]",
-            "location"      : "[resourceGroup().location]",
+            "location"      : "centralindia",
             "tags": 
             {
                 "displayName": "[parameters('tags')[copyIndex('vnetCopy')]]"
@@ -251,7 +251,7 @@
             },
             "name"           : "[parameters('networkInterfaceName')[copyIndex('niccopy')]]",
             
-            "location"       : "[resourceGroup().location]",
+            "location"       : "centralindia",
 
             "dependsOn": 
             [
@@ -295,7 +295,7 @@
                 "mode"     : "Serial"
             },
             "name"         : "[parameters('vmName')[copyIndex('vmcopy')]]",
-            "location"     : "[resourceGroup().location]",
+            "location"     : "centralindia",
             "dependsOn": 
             [
                            "[resourceId('Microsoft.Network/networkInterfaces',parameters('networkInterfaceName')[copyIndex('vmcopy')])]"
