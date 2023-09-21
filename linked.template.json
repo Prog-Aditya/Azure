@@ -1,65 +1,352 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "vnetName": {
-            "type": "array"
-            
-        },
-        "subnetName": {
+    "parameters": 
+    {
+        "vnetName": 
+        {
             "type": "array"
         },
-        "vnetaddressPrefix": {
+        "subnetName": 
+        {
             "type": "array"
         },
-        "subNetaddressPrefix": {
+        "vNetAddressPreffix":
+        {
             "type": "array"
         },
-        "vNetToSubnetMap": {
+        "subNetAddressPreffix": 
+        {
+            "type": "array"
+        },
+        "nsgName": 
+        {
+            "type": "array"
+        },
+        "nsgRuleName": 
+        {
+            "type": "array"
+        },
+        "vmName": 
+        {
+            "type": "array"
+        },
+        "networkInterfaceName": 
+        {
+            "type": "array"
+        },
+        "publicIpName": 
+        {
+            "type": "array"
+        },
+        "protocol": 
+        {
+            "type": "array"
+        },
+        "sourcePortRange": 
+        {
+            "type": "array"
+        },
+        "destinationPortRange": 
+        {
+            "type": "array"
+        },
+        "sourceAddressPrefix": 
+        {
+            "type": "array"
+        },
+        "destinationAddressPrefix": 
+        {
+            "type": "array"
+        },
+        "access": 
+        {
+            "type": "array"
+        },
+        "priority": 
+        {
+            "type": "array"
+        },
+        "direction": 
+        {
+            "type": "array"
+        },
+        "adminComputerName": 
+        {
+            "type": "array"
+        },
+        "adminUserName": 
+        {
+            "type": "array"
+        },
+        "adminPassword": 
+        {
+            "type": "array"
+        },
+        "publisher":
+        {
+            "type": "array"
+        },
+        "offer": 
+        {
+            "type": "array"
+        },
+        "sku": 
+        {
+            "type": "array"
+        },
+        "version": 
+        {
+            "type": "array"
+        },
+        "vNetMap": 
+        {
+            "type": "array"
+        },
+        "subNetMap": 
+        {
+            "type": "array"
+        },
+        "description": 
+        {
+            "type": "array"
+        },
+        "ipconfigName": 
+        {
+            "type": "array"
+        },
+        "ipAllocationMethod": 
+        {
+            "type": "array"
+        },
+        "tags": 
+        {
+            "type": "array"
+        },
+        "vmSize": 
+        {
+            "type": "array"
+        },
+        "caching": 
+        {
+            "type": "array"
+        },
+        "createOption": 
+        {
             "type": "array"
         }
     },
+    "functions": [],
+    "variables": {},
     "resources": [
         {
-            "name": "[parameters('vnetName')[copyIndex('vnetcopy')]]",
-            "type": "Microsoft.Network/virtualNetworks",
-            "apiVersion": "2020-11-01",
-            "location": "[resourceGroup().location]",
-            "copy": {
-                "name": "vnetcopy",
-                "count": "[length(parameters('vnetName'))]",
-                "mode": "Serial"
+            "apiVersion"    : "2020-11-01",
+            "type"          : "Microsoft.Network/publicIPAddresses",
+            "copy": 
+            {
+                "name"      : "pipcopy",
+                "count"     : "[length(parameters('publicIpName'))]",
+                "mode"      : "Serial"
             },
+            "name"          : "[parameters('publicIpName')[copyIndex('pipcopy')]]",
+            "location"      : "[resourceGroup().location]",
+            "tags": 
+            {
+                "displayName": "[parameters('tags')[copyIndex('pipcopy')]]"
+            },
+            "properties": 
+            {
+                "publicIPAllocationMethod": "[parameters('ipAllocationMethod')[copyIndex('pipcopy')]]",
+                "dnsSettings": 
+                {
+                    "domainNameLabel": "[toLower(parameters('vmName')[copyIndex('pipcopy')])]"
+                }
+            }
+        },
+        {
+            "apiVersion"       : "2020-11-01",
+            "type"             : "Microsoft.Network/networkSecurityGroups",
+            "copy": {
+                "name"         : "nsgcopy",
+                "count"        : "[length(parameters('nsgName'))]",
+                "mode"         : "Serial"
+            },
+            "name"             : "[parameters('nsgName')[copyIndex('nsgcopy')]]",
+            "location"         : "[resourceGroup().location]",
             "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "[parameters('vnetaddressPrefix')[copyIndex('vnetcopy')]]"
+                "securityRules": [
+                    {
+                        "name" : "[parameters('nsgRuleName')[copyIndex('nsgcopy')]]",
+                        "properties": 
+                        {
+                            "description"                            : "[parameters('description')[copyIndex('nsgcopy')]]",
+                            "protocol"                               : "[parameters('protocol')[copyIndex('nsgcopy')]]",
+                            "sourcePortRange"                        : "[parameters('sourcePortRange')[copyIndex('nsgcopy')]]",
+                            "destinationPortRange"                   : "[parameters('destinationPortRange')[copyIndex('nsgcopy')]]",
+                            "sourceAddressPrefix"                    : "[parameters('sourceAddressPrefix')[copyIndex('nsgcopy')]]",
+                            "destinationAddressPrefix"               : "[parameters('destinationAddressPrefix')[copyIndex('nsgcopy')]]",
+                            "access"                                 : "[parameters('access')[copyIndex('nsgcopy')]]",
+                            "priority"                               : "[parameters('priority')[copyIndex('nsgcopy')]]",
+                            "direction"                              : "[parameters('direction')[copyIndex('nsgcopy')]]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion"    : "2020-11-01",
+            "type"          : "Microsoft.Network/virtualNetworks",
+            "copy": 
+            {
+                "name"      : "vnetCopy",
+                "count"     : "[length(parameters('vnetName'))]"
+            },
+            "name"          : "[parameters('vnetName')[copyIndex('vnetCopy')]]",
+            "location"      : "[resourceGroup().location]",
+            "tags": 
+            {
+                "displayName": "[parameters('tags')[copyIndex('vnetCopy')]]"
+            },
+            "properties": 
+            {
+                "addressSpace": 
+                {
+                    "addressPrefixes": 
+                    [
+                        "[parameters('vNetAddressPreffix')[copyIndex('vnetCopy')]]"
                     ]
                 }
             }
         },
         {
-            "type": "Microsoft.Network/virtualnetworks/subnets",
-            "apiVersion": "2022-09-01",
-            "name": "[concat(parameters('vNetToSubnetMap')[copyIndex('subnetCopy')],'/',parameters('subnetName')[copyIndex('subnetCopy')])]",
-            "copy": {
-                "name": "subnetCopy",
-                "count": "[length(parameters('subnetName'))]",
-                "mode": "Serial"
+            
+            "apiVersion"        : "2022-09-01",
+            "type"              : "Microsoft.Network/virtualnetworks/subnets",
+            "copy": 
+            {
+                "name"          : "subnetCopy",
+                "count"         : "[length(parameters('subnetName'))]"
             },
-            "properties": {
-                "addressPrefix": "[parameters('subNetaddressPrefix')[copyIndex('subnetCopy')]]"
-            },
-            "dependsOn": [
-                "vnetcopy"
-            ]
-        }
-    ],
-    "outputs": {
-        "resourceID": 
+            "name"              : "[concat(parameters('vnetName')[copyIndex('subnetCopy')],'/',parameters('subnetName')[copyIndex('subnetCopy')])]",
+            "dependsOn": 
+            [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName')[copyIndex('subnetCopy')])]"
+            ],
+            "properties": 
+                    {
+                            "addressPrefix"       : "[parameters('subNetAddressPreffix')[copyIndex('subnetCopy')]]",
+                            "networkSecurityGroup": 
+                            {
+                                  "id"            : "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('nsgName')[copyIndex('niccopy')])]"
+                            }
+                    }
+        },
         {
-            "type": "string",
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName')[copyIndex()], parameters('subnetName')[copyIndex()])]"
+            "apiVersion"     : "2020-11-01",
+            "type"           : "Microsoft.Network/networkInterfaces",
+            "copy": {
+                "name"       : "niccopy",
+                "count"      : "[length(parameters('networkInterfaceName'))]",
+                "mode"       : "Serial"
+            },
+            "name"           : "[parameters('networkInterfaceName')[copyIndex('niccopy')]]",
+            
+            "location"       : "[resourceGroup().location]",
+
+            "dependsOn": 
+            [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName')[copyIndex('niccopy')])]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vNetMap')[copyIndex('niccopy')])]"
+            ],
+            "tags": 
+            {
+                "displayName": "[parameters('tags')[copyIndex('niccopy')]]"
+            },
+            "properties": 
+            {
+                "ipConfigurations": 
+                [
+                    {
+                        "name": "[parameters('ipconfigName')[copyIndex('niccopy')]]",
+                        "properties": 
+                        {
+                            "privateIPAllocationMethod": "[parameters('ipAllocationMethod')[copyIndex('niccopy')]]",
+                            "publicIPAddress": 
+                            {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName')[copyIndex('niccopy')])]"
+                            },
+                            "subnet": 
+                            {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vNetMap')[copyIndex('niccopy')], parameters('subNetMap')[copyIndex('niccopy')])]"
+                            }
+                        }
+                    }
+                ]
+            }
+
+        },
+        {
+            "apiVersion"   : "2021-03-01",
+            "type"         : "Microsoft.Compute/virtualMachines",
+            "copy": 
+            {
+                "name"     : "vmcopy",
+                "count"    : "[length(parameters('vmName'))]",
+                "mode"     : "Serial"
+            },
+            "name"         : "[parameters('vmName')[copyIndex('vmcopy')]]",
+            "location"     : "[resourceGroup().location]",
+            "dependsOn": 
+            [
+                           "[resourceId('Microsoft.Network/networkInterfaces',parameters('networkInterfaceName')[copyIndex('vmcopy')])]"
+            ],
+            "properties": 
+            {
+                "hardwareProfile": 
+                {
+                    "vmSize": "[parameters('vmSize')[copyIndex('vmcopy')]]"
+                },
+                "osProfile": 
+                {
+                    "computerName"   : "[parameters('adminComputerName')[copyIndex('vmcopy')]]",
+                    "adminUsername"  : "[parameters('adminUserName')[copyIndex('vmcopy')]]",
+                    "adminPassword"  : "[parameters('adminPassword')[copyIndex('vmcopy')]]"
+                },
+                "storageProfile": 
+                {
+                    "imageReference": 
+                    {
+                        "publisher"   : "[parameters('publisher')[copyIndex('vmcopy')]]",
+                        "offer"       : "[parameters('offer')[copyIndex('vmcopy')]]",
+                        "sku"         : "[parameters('sku')[copyIndex('vmcopy')]]",
+                        "version"     : "[parameters('version')[copyIndex('vmcopy')]]"
+                    },
+                    "osDisk": {
+                        "name"          : "[concat('OSDisk',copyIndex('vmcopy'))]",
+                        "caching"       : "[parameters('caching')[copyIndex('vmcopy')]]",
+                        "createOption"  : "[parameters('createOption')[copyIndex('vmcopy')]]"
+                    }
+                },
+                "networkProfile": 
+                {
+                    "networkInterfaces": 
+                    [
+                        {
+                            "id"     : "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName')[copyIndex('vmcopy')])]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile" : 
+                {
+                    "bootDiagnostics": 
+                    {
+                        "enabled"    : true
+                    }
+                }
+            }
         }
-    }
+        
+
+    ],
+    "outputs": {}
 }
